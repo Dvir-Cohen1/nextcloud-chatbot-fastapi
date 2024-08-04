@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+
+# Environment files
+.env
+*.env
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Database files
+*.sqlite3
+*.db
+
+# Local development
+*.local
+
+# FastAPI-specific settings
+*.db.sqlite3
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
