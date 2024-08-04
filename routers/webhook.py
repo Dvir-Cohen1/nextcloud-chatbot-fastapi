@@ -19,8 +19,8 @@ async def webhook(request: Request):
 
     body = await request.body()
 
-    if not verify_signature(SECRET_KEY, random_value, body, signature):
-        raise HTTPException(status_code=403, detail="Invalid signature")
+    # if not verify_signature(SECRET_KEY, random_value, body, signature):
+    #     raise HTTPException(status_code=403, detail="Invalid signature")
 
     try:
         data = json.loads(body.decode())
@@ -38,20 +38,24 @@ async def webhook(request: Request):
     logger.info(f"Target Info: {target_info}")
 
     user_name = actor_info.get("name")
+    user_id = actor_info.get("id")
     target_id = target_info.get("id")
     
     object_id = object_info.get("id")
-    
-    print(object_id)
+
     message = {
         "message": f"How are you, {user_name}?",
-        "replyTo": object_id
+        "replyTo": target_id,
+        "referenceId": object_id,
+        'silent': False,  
+
     }
 
     try:
-        await send_message(target_id, message)
+        await send_message(target_id, message,random_value)
         logger.info(f"Sent message to {user_name} in chat {target_id}")
     except HTTPException as e:
         logger.error(f"Failed to send message: {e.detail}")
 
     return {"status": "ok"}
+

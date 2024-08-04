@@ -11,7 +11,7 @@ def verify_signature(secret_key: str, random_value: str, body: bytes, signature:
 
 def generate_signature(secret_key: str, random_value: str, payload: str) -> str:
     return hmac.new(
-        key=secret_key,
+        key=secret_key.encode(),
         msg=f"{random_value}{payload}".encode(),
         digestmod=hashlib.sha256
     ).hexdigest()
