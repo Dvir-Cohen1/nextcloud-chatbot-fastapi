@@ -13,11 +13,10 @@ logger = setup_logger(__name__)
 # In-memory store for conversation states
 conversation_state: Dict[str, str] = {}
 
-async def send_message(token: str, message: str, random_value: str, reply_to: str = None, options: list = None):
+async def send_message(token: str, message: str, random_value: str, reply_to: str = None):
     message_data = {
         "message": message,
         "replyTo": reply_to,
-        "options": options,
         "silent": False,
         "referenceId": hashlib.sha256(f"{message}{time.time()}".encode()).hexdigest(),
     }
@@ -75,8 +74,7 @@ async def handle_user_message(actor_info, target_info, message_text, random_valu
 
 async def start_conversation(user_name: str, target_id: str, random_value: str):
     message = f"Hello {user_name}, what would you like to do today? 'deposit' or 'withdraw'"
-    options = ["deposit", "withdraw"]
-    await send_message(target_id, message, random_value, reply_to=target_id, options=options)
+    await send_message(target_id, message, random_value, reply_to=target_id)
     conversation_state[target_id] = "waiting_for_action"
 
 async def handle_action_selection(target_id: str, message_text: str, random_value: str):
