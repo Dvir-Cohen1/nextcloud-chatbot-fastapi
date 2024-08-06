@@ -78,6 +78,10 @@ Send a test message from Nextcloud and ensure that your FastAPI service logs or 
 - Enable bot in chat setting.
 - send any message.
 
+## Screenshot
+![screenshot](https://github.com/user-attachments/assets/4edf9e03-f582-471b-bbec-bba151be604c)
+
+
 ## Commands
 - Run the FastAPI Application: uvicorn main:app --reload
 - Install Python Dependencies: pip install -r requirements.txt
