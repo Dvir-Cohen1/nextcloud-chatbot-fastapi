@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from routers import webhook, bot
 from logging_config import setup_logger
 
