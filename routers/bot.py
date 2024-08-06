@@ -1,19 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from config import SECRET_KEY, NEXTCLOUD_URL
-from utils.signature import generate_signature
+from utils.signature import generate_signature, sign_message
 import os
 import json
 import httpx
 from logging_config import setup_logger
-import random
-import string
-import hmac
-import hashlib
 
 router = APIRouter()
 logger = setup_logger(__name__)
 
-# @router.post("/bot/{token}/message")
+@router.post("/bot/{token}/message")
 async def send_message(token: str, message_data: dict,random_value:str):
 
     # random_value = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(32))  # Generate a random value
@@ -25,7 +21,7 @@ async def send_message(token: str, message_data: dict,random_value:str):
     request_body = json.dumps(message_data)
 
     message = message_data.get("message", "")
-    digest = sign_message(SECRET_KEY, message, random_value)
+    digest = sign_message(SECRET_KEY, request_body, random_value)
 
     headers = {
     'Content-Type': 'application/json',
@@ -38,7 +34,8 @@ async def send_message(token: str, message_data: dict,random_value:str):
         response = await client.post(
             url=f"{NEXTCLOUD_URL}/ocs/v2.php/apps/spreed/api/v1/bot/{token}/message",
             json=request_body,
-            headers=headers
+            headers=headers,
+            # timeout=60
         )
 
     if response.status_code == 201:
@@ -74,20 +71,3 @@ async def react_to_message(token: str, messageId: str, reaction: str):
         error_message = f"Failed with status code {response.status_code}: {response.text}"
         logger.error(f"Error adding reaction: {error_message}")
         raise HTTPException(status_code=response.status_code, detail=error_message)
-
-
-
-
-
-
-
-
-# --------------------------------------------------------------
-def sign_message(shared_secret, message, random_header):
-    random_header_bytes = random_header.encode('utf-8')
-    shared_secret_bytes = shared_secret.encode('utf-8')
-    signature = hmac.new(shared_secret_bytes, digestmod=hashlib.sha256)
-    signature.update(random_header_bytes)
-    signature.update(message.encode('utf-8'))
-    
-    return signature.hexdigest()

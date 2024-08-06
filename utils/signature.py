@@ -16,4 +16,11 @@ def generate_signature(secret_key: str, random_value: str, payload: str) -> str:
         digestmod=hashlib.sha256
     ).hexdigest()
 
-
+def sign_message(shared_secret, message, random_header):
+    random_header_bytes = random_header.encode('utf-8')
+    shared_secret_bytes = shared_secret.encode('utf-8')
+    signature = hmac.new(shared_secret_bytes, digestmod=hashlib.sha256)
+    signature.update(random_header_bytes)
+    signature.update(message.encode('utf-8'))
+    
+    return signature.hexdigest()

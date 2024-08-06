@@ -13,14 +13,14 @@ router = APIRouter()
 async def webhook(request: Request):
     signature = request.headers.get("X-Nextcloud-Talk-Signature")
     random_value = request.headers.get("X-Nextcloud-Talk-Random")
-
+    print(random_value)
     if not signature or not random_value:
         raise HTTPException(status_code=400, detail="Missing headers")
 
     body = await request.body()
 
-    # if not verify_signature(SECRET_KEY, random_value, body, signature):
-    #     raise HTTPException(status_code=403, detail="Invalid signature")
+    if not verify_signature(SECRET_KEY, random_value, body, signature):
+        raise HTTPException(status_code=403, detail="Invalid signature")
 
     try:
         data = json.loads(body.decode())
@@ -58,4 +58,3 @@ async def webhook(request: Request):
         logger.error(f"Failed to send message: {e.detail}")
 
     return {"status": "ok"}
-
