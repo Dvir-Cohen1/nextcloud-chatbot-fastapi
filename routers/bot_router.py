@@ -1,14 +1,10 @@
 from fastapi import APIRouter, Request, HTTPException
-from config import SECRET_KEY
-
-from services.bot_service import send_message
+from services.bot_service import handle_user_message
 from utils.signature import verify_signature
 from utils.extraction import extract_actor, extract_object, extract_target
 import json
-from logging_config import setup_logger
+from config import SECRET_KEY
 
-
-logger = setup_logger(__name__)
 router = APIRouter()
 
 @router.post("/webhook")
@@ -31,32 +27,16 @@ async def webhook(request: Request):
         raise HTTPException(status_code=400, detail="Invalid JSON body")
 
     # Extract relevant information
-    event_type = data.get("type")
     actor_info = extract_actor(data)
-    object_info = extract_object(data)
     target_info = extract_target(data)
 
-    logger.info(f"Event Type: {event_type}")
-    logger.info(f"Actor Info: {actor_info}")
-    logger.info(f"Object Info: {object_info}")
-    logger.info(f"Target Info: {target_info}")
+    object_info = extract_object(data)
+    content_data = object_info.get("content", "{}")
+    message_text = content_data.get("message")
 
-    # Prepare message data
-    user_name = actor_info.get("name")
-    target_id = target_info.get("id")
-
-    message = {
-        "message": f"How are you, {user_name}?",
-        "replyTo": target_id,
-        'silent': False,
-    }
-
-    # Send the message
     try:
-        await send_message(target_id, message, random_value)
-        logger.info(f"Sent message to {user_name} in chat {target_id}")
+        await handle_user_message(actor_info, target_info, message_text, random_value)
     except HTTPException as e:
-        logger.error(f"Failed to send message: {e.detail}")
-        raise
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
 
     return {"status": "ok"}
