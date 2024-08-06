@@ -43,25 +43,40 @@ uvicorn
 httpx
 ```
 
-### 4. Run the FastAPI Application
+### 4. Create and Set Environment Variables
 ```bash
-uvicorn main:app --reload
+# .env file
+
+NEXTCLOUD_BOT_SECRET=
+NEXTCLOUD_URL=http:
 ```
-This command starts the FastAPI server locally at http://127.0.0.1:8000/.
+
+### 5. Run the FastAPI Application
+```bash
+# In Development
+uvicorn main:app --host <IPv4 Address> --port 8000
+```
+This command starts the FastAPI server locally at http://<IPv4_Address>:8000/.
 
 ## Connecting to Nextcloud
-Ensure your Nextcloud instance is running on http://localhost:8080. The FastAPI service should be reachable from this address.
-
+Ensure the Nextcloud instance is running and reachable.
 ### 1. Install the Bot in Nextcloud
 Use the following command to install and configure the bot:
 ```bash
-php /var/www/html/occ talk:bot:install --feature webhook <NAME> <BOT_SECRET> <BOT_WEBHOOK_URL> <DESCRIPTION>
-```
+# Replace <> with your actual details.
 
-Replace <> with your actual details.
+php /var/www/html/occ talk:bot:install --feature bots-v1 <BOT_NAME> <BOT_SECRET> <BOT_SERVICE_URL/webhook> <DESCRIPTION>
+```
+See full documntation here: [OCC documentation](https://nextcloud-talk.readthedocs.io/en/stable/occ/#talkbotinstall)
+
 
 ### 2. Verify Webhook Communication
-Send a test message from Nextcloud and ensure that your FastAPI service logs or processes the message as expected. If communication fails, ensure that Nextcloud can reach http://127.0.0.1:8000.
+Send a test message from Nextcloud and ensure that your FastAPI service logs or processes the message as expected. If communication fails, ensure that Nextcloud can reach the bot address.
+
+### 3. Enable Bot in chat
+- optional: Create new chat in Talk app and give it a name eg: Bot
+- Enable bot in chat setting.
+- send any message.
 
 ## Commands
 - Run the FastAPI Application: uvicorn main:app --reload
