@@ -1,14 +1,13 @@
 from fastapi import FastAPI
-from routers import webhook, bot
+from routers import bot_router
 from logging_config import setup_logger
 
 # Initialize FastAPI app & Logger
 app = FastAPI()
 logger = setup_logger(__name__)
 
-# Include routers
-app.include_router(webhook.router)
-app.include_router(bot.router)
+# Include router
+app.include_router(bot_router.router)
 
 @app.get("/")
 def home():
