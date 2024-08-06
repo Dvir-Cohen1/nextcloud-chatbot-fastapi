@@ -9,12 +9,6 @@ def verify_signature(secret_key: str, random_value: str, body: bytes, signature:
     ).hexdigest()
     return hmac.compare_digest(expected_signature, signature)
 
-def generate_signature(secret_key: str, random_value: str, payload: str) -> str:
-    return hmac.new(
-        key=secret_key.encode(),
-        msg=f"{random_value}{payload}".encode(),
-        digestmod=hashlib.sha256
-    ).hexdigest()
 
 def sign_message(shared_secret, message, random_header):
     random_header_bytes = random_header.encode('utf-8')

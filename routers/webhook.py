@@ -41,14 +41,10 @@ async def webhook(request: Request):
     user_id = actor_info.get("id")
     target_id = target_info.get("id")
     
-    object_id = object_info.get("id")
-
     message = {
         "message": f"How are you, {user_name}?",
         "replyTo": target_id,
-        "referenceId": object_id,
         'silent': False,  
-
     }
 
     try:
