@@ -28,16 +28,14 @@ async def webhook(request: Request):
 
     # Extract relevant information
     actor_info = extract_actor(data)
-    object_info = extract_object(data)
     target_info = extract_target(data)
-    # message_text = data.get("message")
 
+    object_info = extract_object(data)
     content_data = object_info.get("content", "{}")
     message_text = content_data.get("message")
 
-    # Handle user message
     try:
-        await handle_user_message(actor_info, object_info, target_info, message_text, random_value)
+        await handle_user_message(actor_info, target_info, message_text, random_value)
     except HTTPException as e:
         raise HTTPException(status_code=e.status_code, detail=e.detail)
 
